@@ -1,0 +1,41 @@
+name: plugin_release
+author: suinua
+description: relase plugin
+branding:
+  icon: plus
+  color: green
+inputs:
+  plugin_dir:
+    description: ''
+    required: true
+  github_token:
+    description: ''
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Enable Git operation
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Setup dart
+      uses: dart-lang/setup-dart@v1
+
+    - name: Install Dart dependencies
+      shell: sh
+      run: |
+        cd $GITHUB_ACTION_PATH
+        dart pub get
+
+    - name: Release
+      run: dart --enable-asserts $GITHUB_ACTION_PATH/bin/plugin_release.dart
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
