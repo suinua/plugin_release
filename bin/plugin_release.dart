@@ -38,8 +38,8 @@ void main() async {
   //新しい→古いでforEachを回す
   pluginDataList.forEach((commitData) {
     if (!releaseVersions.contains(commitData.pluginVersion)) {
+      print('last:$lastPluginVersion, ${commitData.pluginVersion}');
       if (lastPluginVersion != commitData.pluginVersion) {
-        CustomLogger.normal.i('start release:${commitData.pluginVersion},${commitData.commitId}');
         releaseCommitDataList.add(commitData);
         releaseVersions.add(commitData.pluginVersion);
       }
