@@ -1,8 +1,8 @@
-A simple command-line application.
+# Plugin Release
+![](https://user-images.githubusercontent.com/34801662/159945516-9bca768d-24c7-497f-8a47-2b5ae920eedc.png)
+plugin.ymlのversionの変更を検知して、リリースを作成します
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
-
+# 導入
 ```yaml
 name: 
 
