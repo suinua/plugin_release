@@ -77,6 +77,7 @@ Future<void> release(List<CommitData> commitDataList) async {
     var commitData = commitDataList[i];
     var dirName = commitData.pluginVersion;
     var dir = Directory(commitData.pluginVersion);
+    await dir.create();
 
     Directory.current = dir.absolute.path;
     //clone
