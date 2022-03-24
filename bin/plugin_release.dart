@@ -44,9 +44,8 @@ void main() async {
 Future<dynamic> getPluginYml(String commitId) async {
   var basicAuth = 'Basic ' + base64Encode(utf8.encode('suinua:${token()}'));
   var header = {'authorization': basicAuth};
-  //todo:remove sample_plugin
   var response = await http.get(
-      Uri.parse('https://api.github.com/repos/${repository()}/contents/sample_plugin/plugin.yml?ref=$commitId'),
+      Uri.parse('https://api.github.com/repos/${repository()}/contents/plugin.yml?ref=$commitId'),
       headers: header);
   var downloadUrl = jsonDecode(response.body)['download_url']!;
 
