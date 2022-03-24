@@ -134,18 +134,28 @@ Future<void> createRelease(CommitData commitData, String pharPath) async {
   var basicAuth = 'Basic ' + base64Encode(utf8.encode('suinua:${token()}'));
   var createReleaseHeader = {'authorization': basicAuth};
   var createReleaseBody = {'tag_name': commitData.pluginVersion};
-  var createRelease = await http.post(Uri.parse('https://api.github.com/repos/${repository()}/releases'), headers: createReleaseHeader, body: jsonEncode(createReleaseBody));
-  CustomLogger.normal.v(createRelease.body);
+  var createReleaseResponse = await http.post(Uri.parse('https://api.github.com/repos/${repository()}/releases'), headers: createReleaseHeader, body: jsonEncode(createReleaseBody));
+  if (createReleaseResponse.statusCode == 200) {
+    CustomLogger.normal.i('Successfully created release ${commitData.pluginVersion}');
+  } else {
+    CustomLogger.normal.w('An error occurred when creating the release ${commitData.pluginVersion}');
+    CustomLogger.normal.w(createReleaseResponse.body);
+  }
 
-  var releaseId = jsonDecode(createRelease.body)['id'];
+  var releaseId = jsonDecode(createReleaseResponse.body)['id'];
   var phar = File(pharPath);
   var uploadHeader = {
     'authorization': basicAuth,
     'Content-Length': phar.readAsBytesSync().length.toString(),
     'Content-Type' : 'application/octet-stream'
   };
-  var upload = await http.post(Uri.parse('https://uploads.github.com/repos/${repository()}/releases/$releaseId/assets?name=$pharPath'), headers: uploadHeader, body: phar.readAsBytesSync());
-  CustomLogger.normal.v(upload.body);
+  var uploadPharResponse = await http.post(Uri.parse('https://uploads.github.com/repos/${repository()}/releases/$releaseId/assets?name=$pharPath'), headers: uploadHeader, body: phar.readAsBytesSync());
+  if (uploadPharResponse.statusCode == 200) {
+    CustomLogger.normal.i('Successfully uploaded phar file $pharPath');
+  } else {
+    CustomLogger.normal.w('An error occurred when uploading the phar file $pharPath');
+    CustomLogger.normal.w(uploadPharResponse.body);
+  }
 }
 
 class CommitData {
