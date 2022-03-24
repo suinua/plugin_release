@@ -1,0 +1,21 @@
+{
+  "name": "mine_deep_rock/bossbar_system",
+  "authors": [
+    {
+      "name": "suinua"
+    },
+    {
+      "name": "ribnil"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "": [
+        "src/"
+      ]
+    }
+  },
+  "require": {
+    "pocketmine/pocketmine-mp": "*"
+  }
+}
