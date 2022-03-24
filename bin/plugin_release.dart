@@ -51,6 +51,9 @@ Future<dynamic> getPluginYml(String commitId) async {
   var response = await http.get(
       Uri.parse('https://api.github.com/repos/${repository()}/contents/plugin.yml?ref=$commitId'),
       headers: header);
+  print('https://api.github.com/repos/${repository()}/contents/plugin.yml?ref=$commitId');
+  print(response.statusCode);
+  print(response.body);
   var downloadUrl = jsonDecode(response.body)['download_url']!;
 
   var downloadResponse =
