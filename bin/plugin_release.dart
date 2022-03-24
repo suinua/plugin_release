@@ -105,11 +105,6 @@ Future<void> release(List<CommitData> commitDataList) async {
     CustomLogger.simple.v(
         'git clone https://github.com/pmmp/DevTools > stderr: ${devtoolCloneResult.stderr}');
 
-    var ls = await Process.run('ls', []);
-    CustomLogger.simple.v(
-        'ls > stdout: ${ls.stdout}');
-    CustomLogger.simple.v(
-        'ls > stderr: ${ls.stderr}');
     var pharPath = '${commitData.pluginName}${commitData.pluginVersion}.phar';
     var arg = [
       '-dphar.readonly=0',
