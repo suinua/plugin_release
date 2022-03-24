@@ -99,6 +99,7 @@ Future<void> release(List<CommitData> commitDataList) async {
         'git reset --hard ${commitData.commitId} > stderr: ${resetResult.stderr}');
 
     //build phar
+    await Process.run('git', ['clone','https://github.com/pmmp/DevTools']);
     var pharPath = '${commitData.pluginName}${commitData.pluginVersion}.phar';
     var arg = [
       '-dphar.readonly=0',
