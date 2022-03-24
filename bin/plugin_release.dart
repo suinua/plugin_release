@@ -115,11 +115,11 @@ Future<void> release(List<CommitData> commitDataList) async {
       '-dphar.readonly=0',
       path.join('DevTools', 'src', 'ConsoleScript.php'),
       '--make',
-      dirName,
+      repositoryName(),
       '--out',
       pharPath,
       '--stub',
-      path.join('Devtools', 'stub.php')
+      path.join('DevTools', 'stub.php')
     ];
 
     var builtPharResult = await Process.run('php', arg);

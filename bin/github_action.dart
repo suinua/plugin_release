@@ -11,3 +11,8 @@ String token() {
 String repository() {
   return Platform.environment['GITHUB_REPOSITORY']!;
 }
+
+String repositoryName() {
+  return repository().split('/').last;
+}
+
