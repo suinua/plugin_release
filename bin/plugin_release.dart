@@ -105,23 +105,28 @@ Future<void> release(List<CommitData> commitDataList) async {
     CustomLogger.simple.v(
         'git clone https://github.com/pmmp/DevTools > stderr: ${devtoolCloneResult.stderr}');
 
-    var pharPath = '${commitData.pluginName}${commitData.pluginVersion}.phar';
-    var arg = [
-      '-dphar.readonly=0',
-      path.join('Devtools', 'src', 'ConsoleScript.php'),
-      '--make',
-      dirName,
-      '--out',
-      pharPath,
-      '--stub',
-      path.join('Devtools', 'stub.php')
-    ];
+    var ls = await Process.run('ls', []);
+    CustomLogger.simple.v(
+        'ls > stdout: ${ls.stdout}');
+    CustomLogger.simple.v(
+        'ls > stderr: ${ls.stderr}');
+    //var pharPath = '${commitData.pluginName}${commitData.pluginVersion}.phar';
+    //var arg = [
+    //  '-dphar.readonly=0',
+    //  path.join('Devtools', 'src', 'ConsoleScript.php'),
+    //  '--make',
+    //  dirName,
+    //  '--out',
+    //  pharPath,
+    //  '--stub',
+    //  path.join('Devtools', 'stub.php')
+    //];
 
-    var builtPharResult = await Process.run('php', arg);
-    CustomLogger.simple.v('php ${arg.join(' ')}> stdout: ${builtPharResult.stdout}');
-    CustomLogger.simple.v('php ${arg.join(' ')}> stderr: ${builtPharResult.stderr}');
+    //var builtPharResult = await Process.run('php', arg);
+    //CustomLogger.simple.v('php ${arg.join(' ')}> stdout: ${builtPharResult.stdout}');
+    //CustomLogger.simple.v('php ${arg.join(' ')}> stderr: ${builtPharResult.stderr}');
 
-    await createRelease(commitData, pharPath);
+    //await createRelease(commitData, pharPath);
   }
 }
 
