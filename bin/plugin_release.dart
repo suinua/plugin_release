@@ -31,18 +31,22 @@ void main() async {
     lastPluginVersion = yml['version'];
   }
 
-
   //最初のバージョンが違えばリリース
-  var releasedVersions = <String>[];
+  var releaseVersions = <String>[];
+  var releaseCommitDataList = <CommitData>[];
+
   //新しい→古いでforEachを回す
   pluginDataList.forEach((commitData) {
-    if (!releasedVersions.contains(commitData.pluginVersion)) {
+    if (!releaseVersions.contains(commitData.pluginVersion)) {
       if (lastPluginVersion != commitData.pluginVersion) {
-        print('release:${commitData.pluginVersion},${commitData.commitId}');
-        releasedVersions.add(commitData.pluginVersion);
+        CustomLogger.normal.i('start release:${commitData.pluginVersion},${commitData.commitId}');
+        releaseCommitDataList.add(commitData);
+        releaseVersions.add(commitData.pluginVersion);
       }
     }
   });
+
+  await release(releaseCommitDataList);
 }
 
 Future<dynamic> getPluginYml(String commitId) async {
@@ -51,9 +55,7 @@ Future<dynamic> getPluginYml(String commitId) async {
   var response = await http.get(
       Uri.parse('https://api.github.com/repos/${repository()}/contents/plugin.yml?ref=$commitId'),
       headers: header);
-  print('https://api.github.com/repos/${repository()}/contents/plugin.yml?ref=$commitId');
-  print(response.statusCode);
-  print(response.body);
+
   var downloadUrl = jsonDecode(response.body)['download_url']!;
 
   var downloadResponse =
@@ -61,7 +63,7 @@ Future<dynamic> getPluginYml(String commitId) async {
   return loadYaml(downloadResponse.body);
 }
 
-void buildPhar(List<CommitData> commitDataList) async {
+Future<void> release(List<CommitData> commitDataList) async {
   //Set git user
   await Process.run('git', ['config', '--global', 'user.name', actorName()]);
   await Process.run('git', [
@@ -96,13 +98,14 @@ void buildPhar(List<CommitData> commitDataList) async {
         'git reset --hard ${commitData.commitId} > stderr: ${resetResult.stderr}');
 
     //build phar
+    var pharPath = '${commitData.pluginName}${commitData.pluginVersion}.phar';
     var arg = [
       '-dphar.readonly=0',
       path.join('Devtools', 'src', 'ConsoleScript.php'),
       '--make',
       dirName,
       '--out',
-      '${commitData.pluginName}${commitData.pluginVersion}.phar',
+      pharPath,
       '--stub',
       path.join('Devtools', 'stub.php')
     ];
@@ -110,10 +113,12 @@ void buildPhar(List<CommitData> commitDataList) async {
     var builtPharResult = await Process.run('php', arg);
     CustomLogger.simple.v('php ${arg.join(' ')}> stdout: ${builtPharResult.stdout}');
     CustomLogger.simple.v('php ${arg.join(' ')}> stderr: ${builtPharResult.stderr}');
+
+    await createRelease(commitData, pharPath);
   }
 }
 
-void createRelease(CommitData commitData, String pharPath) async {
+Future<void> createRelease(CommitData commitData, String pharPath) async {
   var basicAuth = 'Basic ' + base64Encode(utf8.encode('suinua:${token()}'));
   var createReleaseHeader = {'authorization': basicAuth};
   var createReleaseBody = {'tag-name': commitData.pluginVersion};

@@ -5,9 +5,6 @@ branding:
   icon: plus
   color: green
 inputs:
-  plugin_dir:
-    description: ''
-    required: true
   github_token:
     description: ''
     required: true
