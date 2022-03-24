@@ -134,7 +134,7 @@ Future<void> createRelease(CommitData commitData, String pharPath) async {
   var basicAuth = 'Basic ' + base64Encode(utf8.encode('suinua:${token()}'));
   var createReleaseHeader = {'authorization': basicAuth};
   var createReleaseBody = {'tag-name': commitData.pluginVersion};
-  var createRelease = await http.post(Uri.parse('https://api.github.com/repos/${repository()}/releases'), headers: createReleaseHeader, body: createReleaseBody);
+  var createRelease = await http.post(Uri.parse('https://api.github.com/repos/${repository()}/releases'), headers: createReleaseHeader, body: jsonEncode(createReleaseBody));
   CustomLogger.normal.v(createRelease.body);
 
   var releaseId = jsonDecode(createRelease.body)['id'];
