@@ -12,7 +12,7 @@ void main() async {
 
   var eventData =
       jsonDecode(File(env['GITHUB_EVENT_PATH']!).readAsStringSync());
-  var commits = eventData['commits'] as List<Map>;
+  var commits = eventData['commits'] as List;
   var commitIds = commits.map((e) => e['id']).toList();
 
   //プッシュされたコミット(複数)のバージョン
@@ -25,8 +25,12 @@ void main() async {
 
   //プッシュ前のバージョン
   var beforeCommitId = eventData['before'];
-  var yml = await getPluginYml(beforeCommitId);
-  var lastPluginVersion = yml['version'];
+  var lastPluginVersion = '';
+  if (beforeCommitId != null) {
+    var yml = await getPluginYml(beforeCommitId);
+    lastPluginVersion = yml['version'];
+  }
+
 
   //最初のバージョンが違えばリリース
   var releasedVersions = <String>[];
